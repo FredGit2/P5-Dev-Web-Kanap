@@ -29,8 +29,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         for (i = 0; i < oneProduct.colors.length; i++) {
             const colorChoice = document.getElementById("colors");
             const newColor = document.createElement("option");
-
-            newColor.value = oneProduct.newColor;
+            newColor.value = oneProduct.colors[i];
             newColor.textContent = oneProduct.colors[i];
             colorChoice.appendChild(newColor);
 
@@ -41,80 +40,59 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 
         console.log('Il y a eu un problème avec le chargement de la page ');
     });
+//creation de l 'ajout au panier via le localstorage //
+function saveBasket(basket) {
+    localStorage.setItem("basket", JSON.stringify(basket));
+}
+function getBasket() {
+    let basket = localStorage.getItem("basket");
+    if (basket == null) {
+        return [];
+    } else {
+        return JSON.parse(basket);
+    }
+}
+
+function addBasket(product) {
+    let basket = getBasket();
+    let foundProduct = basket.find(p => p.id == product.id && p.color === product.color);
+  
+
+    if (foundProduct != undefined) {
+        foundProduct.quantity = parseInt(foundProduct.quantity) + parseInt(product.quantity);
+    } else {
+
+        basket.push(product);
+    }
+    saveBasket(basket);
+}
 // ajout de l'eventlistener sur le bouton ajouter au panier //
 
 const addToBasket = document.querySelector("#addToCart");
 addToBasket.addEventListener("click", (event) => {
     event.preventDefault();
-    
-    let color = document.querySelector("#colors").value;
+
+    const color = document.querySelector("#colors").value;
     console.log(color)
     const quantity = document.querySelector("#quantity").value;
     console.log(quantity)
 
+    const basket = getBasket();
+    console.log(basket)
+    const product = {
+        id: productId,
+        color: color,
+        quantity: quantity,
+    }
+    addBasket(product);
 
-    //creation de l 'ajout au panier via le localstorage //
-   /* function saveBasket(basket) {
-        localStorage.setItem("basket", JSON.stringify(basket));
-    }
-    function getBasket() {
-        let basket = localStorage.getItem("basket");
-        if (basket == null) {
-            return [];
-        } else {
-            return JSON.parse(basket);
-        }
-    }
-
-    function addBasket(product) {
-        let basket = getBasket();
-        let foundProduct = basket.find(p => p.id == product.id);
-        if (foundProduct != undefined) {
-            foundProduct.quantity++;
-        } else {
-            product.quantiy = 1;
-            basket.push(product);
-        }
-        saveBasket(basket);
-    }
-    function removeBasket(product) {
-        let basket = getBasket();
-        basket = basket.filter(p => p.id == product.id);
-        saveBasket(basket);
-        console.log(basket);
-    }
-    function changeQuantity(product, quantity) {
-        let basket = getBasket();
-        let foundProduct = basket.find(p => p.id == product.id);
-        if (foundProduct != undefined) {
-            foundProduct.quantity += quantity;
-            if (foundProduct.quantity <= 0) {
-                removeBasket(foundProduct);
-            } else {
-                saveBasket(basket);
-            }
-        }
-    }
-    function getNumberProduct() {
-        let basket = getBasket();
-        let number = 0;
-        for (let product of basket) {
-            number += product.quantity;
-        }
-        return number;
-    }
-
-    function getTotalPrice() {
-        let basket = getBasket();
-        let total = 0;
-        for (let product of basket) {
-            total += product.quantity * product.price;
-        }
-        return total;
-    }*/
 }
 )
-   
+
+
+
+
+
 
 
 
