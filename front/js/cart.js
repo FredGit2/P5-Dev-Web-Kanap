@@ -37,7 +37,7 @@ if (basket == null) {
                 product.imageUrl = data.imageUrl;
                 product.altTxt = data.altTxt;
                 recapProduct.push(product);
-                console.log(product.quantity)
+                //console.log(product.quantity)
 
                 //integrer les produits au dom //
                 //-Création de la balise article //
@@ -130,10 +130,10 @@ if (basket == null) {
                 // console.log('Il y a eu un problème avec le chargement de la page ');
             });
     }
-
-
-    // console.log(recapProduct)
+    
+    console.log(recapProduct)
 }
+getNumberProduct();
 
 //supprimer une quantité //
 
@@ -147,10 +147,11 @@ function removeBasket(product) {
 function getNumberProduct() {
     const totalQuantity = document.querySelector("#totalQuantity");
     let number = 0;
-    for (let product of basket) {
+    let product = basket[i];
+    for (let element of product) {
         number += product.quantity;
     }
-    console.log(product);
+    console.log(element);
     return number;
 }
 // prix total de l'ensemble des articles du panier //
