@@ -1,36 +1,23 @@
-// Récupération du panier via  localstorage sous forme de tableau //
 
+// Récupération du panier via  localstorage sous forme de tableau //
 let basket = JSON.parse(localStorage.getItem("basket"));
 //console.log(basket);
-
-//declaratation des variables globales //
-const cartItems = document.querySelector("#cart__items");
-
-/*function saveBasket(basket) {
-    localStorage.setItem("basket", JSON.stringify(basket));
-}
-function deleteItem(){
-    document.querySelectorAll(".deleteItem").forEach(function (item) {
-        item.addEventListener("click", function () {
-            console.log(item.closest("article"));
-        });
-    });
-
-}*/
+let recapProduct = [];
+console.log(recapProduct)
 
 // si panier vide ==> message d'erreur //
 if (basket == null) {
     alert("votre panier est vide");
     // parcourir le tableau issu du localstorage//
 } else {
-    let recapProduct = [];
+
     for (let i = 0; i < basket.length; i++) {
         let product = basket[i];
-       // console.log(product)
+        console.log(recapProduct)
         fetch(`http://localhost:3000/api/products/${product.id}`)
             .then((response) => response.json())
-            .then((data) => {
-               //console.log(data)
+            .then(function (data) {
+                //console.log(data)
                 product.name = data.name;
                 product.price = data.price;
                 product.id = data._id;
@@ -38,7 +25,6 @@ if (basket == null) {
                 product.altTxt = data.altTxt;
                 recapProduct.push(product);
                 //console.log(product.quantity)
-
                 //integrer les produits au dom //
                 //-Création de la balise article //
                 let newArticle = document.createElement("article");
@@ -123,22 +109,54 @@ if (basket == null) {
                 newDelete.setAttribute("class", "deleteItem");
                 newDelete.innerText = "Supprimer";
                 newDivContentSettingsDelete.appendChild(newDelete);
-              
-              
             })
+
             .catch(function (error) {
                 // console.log('Il y a eu un problème avec le chargement de la page ');
             });
-    }
-    
-    console.log(recapProduct)
-}
-getNumberProduct();
 
+    }
+    console.log(recapProduct.length)
+}
+
+
+document.querySelectorAll(".deleteItem").forEach(function (item) {
+    item.addEventListener("click", function () {
+        console.log(item.closest("article").dataset.id);
+    });
+
+});
+
+
+
+
+
+function displayItems(listProduct) {
+    console.log(listProduct)
+    for (let i = 0; i < listProduct.length; i++) {
+        console.log(listProduct[i]);
+    }
+
+}
+//declaratation des variables et fonctions //
+const cartItems = document.querySelector("#cart__items");
+
+function getBasket() {
+    let basket = localStorage.getItem("basket")
+    if (basket == null) {
+        return []
+    } else {
+        return JSON.parse(basket)
+    }
+}
+
+function saveBasket(basket) {
+    localStorage.setItem("basket", JSON.stringify(basket));
+}
 //supprimer une quantité //
 
 function removeBasket(product) {
-    // let basket = getBasket();
+    let basket = getBasket();
     basket = basket.filter((p) => p.id == product.id);
     saveBasket(basket);
     console.log(basket);
@@ -163,6 +181,36 @@ function getTotalPrice() {
     }
     return total;
 }
+// affichage de la quantité totale 
+
+function setTotalQuantity() {
+    let totalQuantity = document.getElementById('totalQuantity')
+    let newQuantity = document.createTextNode(`${getNumberProduct()}`)
+    if (newQuantity != undefined) {
+        totalQuantity.replaceChild(newQuantity, totalQuantity.childNodes[0])
+
+    } else {
+        totalQuantity.appendChild(newQuantity)
+    }
+}
+// gestion de l'ajout de quantité 
+
+function addQuantity(product) {
+    let basket = getBasket()
+    let foundProduct = basket.find(p => p.id == product.id)
+    if (foundProduct != undefined) {
+        foundProduct.quantity = product.quantity
+    }
+
+    saveBasket(basket)
+    setTotalQuantity()
+    setTotalPrice()
+}
+
+
+
+
+
 //passer l'orde de commande /
 // modifier la quantité// ==> utiliser la méthode change / dataset/ closest
 /*function saveBasket(basket) {
