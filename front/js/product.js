@@ -44,6 +44,8 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 function saveBasket(basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
 }
+
+// creation  du panier //
 function getBasket() {
     let basket = localStorage.getItem("basket");
     if (basket == null) {
@@ -52,13 +54,21 @@ function getBasket() {
         return JSON.parse(basket);
     }
 }
-
+// fonction pour ajouter un produit au panier //
 function addBasket(product) {
     let basket = getBasket();
     let foundProduct = basket.find(p => p.id == product.id && p.color === product.color);
-  
+    console.log(foundProduct);
 
-    if (foundProduct != undefined) {
+    // message en cas d'anomalie 
+    if (
+        product.quantity < 1 || product.quantity > 100 || product.quantity === undefined || product.color === "" || product.color === undefined
+    ) {
+        alert("Veuillez sélectionnez une couleur et/ou une quantité comprise entre 1 et 100 avant d'ajouter le produit au panier.");
+
+    } else if
+
+        (foundProduct != undefined) {
         foundProduct.quantity = parseInt(foundProduct.quantity) + parseInt(product.quantity);
     } else {
 
@@ -72,18 +82,19 @@ const addToBasket = document.querySelector("#addToCart");
 addToBasket.addEventListener("click", (event) => {
     event.preventDefault();
 
+    // on récupère les options selectionnées par le visiteur 
     const color = document.querySelector("#colors").value;
-    console.log(color)
     const quantity = document.querySelector("#quantity").value;
-    console.log(quantity)
+
 
     const basket = getBasket();
-    console.log(basket)
+    //console.log(basket)
     const product = {
         id: productId,
         color: color,
         quantity: quantity,
     }
+
     addBasket(product);
 
 }

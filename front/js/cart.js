@@ -27,6 +27,7 @@ async function displayItemsInTheCart() {
     findAndCompareItemsInApi(items, recapProduct);
     displayProducts(recapProduct);
     calculateTotals(recapProduct);
+    alertQuantity();
     const inputField = document.querySelectorAll('.itemQuantity');
     updateTotals(inputField, recapProduct);
     const deleteItemBtn = document.querySelectorAll('.deleteItem');
@@ -41,19 +42,18 @@ displayItemsInTheCart();
 
 // on compare les produits issu du localstorage avec ceux de l'api //
 let itemsOfLocalStorage = getBasketLocalStorage();
-console.log(itemsOfLocalStorage);
+
 
 function findAndCompareItemsInApi(item, basketItems) {
     console.log(basketItems);
     if (itemsOfLocalStorage === null || itemsOfLocalStorage == 0) {
-        alert("votre panier est vide")
+
         emptyBasket();
-        console.log("boom");
+
     } else {
-        console.log("bibibibib");
+
         for (let i = 0; i < itemsOfLocalStorage.length; i++) {
             const itemId = itemsOfLocalStorage[i].id;
-            console.log(itemsOfLocalStorage[i].quantity);
             const found = item.find(element => element._id == itemId);
             basketItems.push({
                 'id': found._id,
@@ -72,11 +72,11 @@ function findAndCompareItemsInApi(item, basketItems) {
 
 //message si panier vide //
 function emptyBasket() {
-    recapProduct = 'Le panier est vide !';
     let newH1 = document.createElement('h1');
     cartItems.appendChild(newH1);
-    newH1.innerText = recapProduct;
+    newH1.innerText = 'Le panier est vide !';
 }
+
 // calcul du nombre d'articles total et du prix total
 function calculateTotals(items) {
     const totalQuantityOfArticles = document.getElementById('totalQuantity');
@@ -90,8 +90,6 @@ function calculateQuantity(items) {
     return items.reduce((a, b) => {
         return parseInt(a) + parseInt(b.quantity);
     }, 0);
-
-
 }
 
 // fonction de calcul du prix total
@@ -101,6 +99,23 @@ function calculateTotalPrice(items) {
         return a + (b.price * b.quantity);
     }, 0);
 }
+// fonction qui alerte sur la quantité si elle ne respecte pas minimum 1 et maximum 100
+function alertQuantity() {
+    let alertItemQuantity = document.querySelectorAll(".itemQuantity");
+    for (let i = 0; i < alertItemQuantity.length; i++) {
+        alertItemQuantity[i].addEventListener("change", function (event) {
+            if (event.target.value >= 1 && event.target.value <= 100) {
+                alertItemQuantity[i].quantity = event.target.value;
+                localStorage.setItem("product", JSON.stringify(items));
+            } else {
+                alert("Attention, la quantité du produit doit être au minimum de 1 et au maximum de 100. Elle sera automatiquement remise à 1.");
+                event.target.value = 1;
+                alertItemQuantity[i].quantity = event.target.value;
+                localStorage.setItem("product", JSON.stringify(items));
+            }
+        });
+    };
+};
 // fonction qui update le local storage avec le calcul du nouveau prix et quantité après modification
 function updateTotals(input, cartItems) {
     for (let i = 0; i < input.length; i++) {
@@ -239,12 +254,6 @@ function createProductInBasket(product) {
     newDelete.innerText = "Supprimer";
     newDivContentSettingsDelete.appendChild(newDelete);
 
-    document.querySelectorAll(".deleteItem").forEach(function (item) {
-        item.addEventListener("click", function () {
-            console.log(item.closest("article").dataset.id);
-        });
-
-    });
 }
 
 

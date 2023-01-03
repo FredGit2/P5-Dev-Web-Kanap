@@ -1,14 +1,14 @@
-/**Récupération de l'orderId avec la propriété "searchParams"
- * Et affichage de l'orderId
-*/
-
+// récupératio nde la chaine de requete dans l'url //
 const url = window.location.search;
-const params = new URLSearchParams(url);
-const orderId = params.get("id");
 
+//extraction  id de l'url //
+const urlId = new URLSearchParams(url);
+const orderId = urlId.get("id");
+
+// affichage de l'ID //
 function orderDisplay() {
-    const orderFinal = document.getElementById("orderId");
-    orderFinal.innerText = orderId;
+    const order = document.getElementById("orderId");
+    order.innerText = orderId;
 };
 
 orderDisplay();
