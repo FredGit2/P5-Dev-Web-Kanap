@@ -132,8 +132,8 @@ function updateTotals(input, cartItems) {
             let index = itemsLocalStorage.findIndex(element => element.id == dataId && element.color == dataColor);
             itemsLocalStorage[index].quantity = Number(event.target.value);
 
-            let newLocalStorage = JSON.stringify(itemsLocalStorage);
-            localStorage.setItem('items', newLocalStorage);
+            let newLocalStorage = JSON.stringify(itemsLocalStorage); // remplace le localstorage initial
+            localStorage.setItem('basket', newLocalStorage);
 
             calculateTotals(cartItems);
         })
@@ -151,12 +151,14 @@ function deleteProductFromTheCart(deleteBtn, cartItems, section, article) {
 
             let indexLs = itemsLocalStorage.findIndex(element => element.id == dataId && element.color == dataColor);
 
+            console.log("indexLs:", indexLs);
             let indexCartItems = cartItems.findIndex(element => element.id == dataId && element.color == dataColor);
+            console.log("indexCartItems:", indexCartItems);
             section.removeChild(article[i]);
 
-            itemsLocalStorage.splice(indexLs, 1);
+            itemsLocalStorage.splice(indexLs, 1); // supprime l'élement de cette position
             let newLocalStorage = JSON.stringify(itemsLocalStorage);
-            localStorage.setItem('items', newLocalStorage);
+            localStorage.setItem('basket', newLocalStorage);
 
             cartItems.splice(indexCartItems, 1);
 
