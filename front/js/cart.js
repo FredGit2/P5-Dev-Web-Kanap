@@ -5,9 +5,16 @@ function getBasketLocalStorage() {
 
 // On récupere les éléments de l'api //
 async function getApiProducts() {
-    let api = await fetch("http://localhost:3000/api/products/");
-    let apiProducts = await api.json();
-    return apiProducts;
+    try {
+        const response = await fetch("http://localhost:3000/api/products/");
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 // on boucle notre panier pour avoir tous les produits //
@@ -21,20 +28,19 @@ function displayProducts(basket) {
 // on execute toutes les fonctions//
 async function displayItemsInTheCart() {
     const items = await getApiProducts();
-    console.log(items)
     const recapProduct = [];
 
     findAndCompareItemsInApi(items, recapProduct);
     displayProducts(recapProduct);
     calculateTotals(recapProduct);
     alertQuantity();
+
     const inputField = document.querySelectorAll('.itemQuantity');
     updateTotals(inputField, recapProduct);
     const deleteItemBtn = document.querySelectorAll('.deleteItem');
     const sectionOfCartItems = document.getElementById('cart__items');
     const articleCartItem = document.querySelectorAll('.cart__item');
     deleteProductFromTheCart(deleteItemBtn, recapProduct, sectionOfCartItems, articleCartItem);
-
 
 }
 displayItemsInTheCart();
@@ -45,7 +51,6 @@ let itemsOfLocalStorage = getBasketLocalStorage();
 
 
 function findAndCompareItemsInApi(item, basketItems) {
-    console.log(basketItems);
     if (itemsOfLocalStorage === null || itemsOfLocalStorage == 0) {
 
         emptyBasket();
@@ -72,9 +77,9 @@ function findAndCompareItemsInApi(item, basketItems) {
 
 //message si panier vide //
 function emptyBasket() {
-    let newH1 = document.createElement('h1');
-    cartItems.appendChild(newH1);
-    newH1.innerText = 'Le panier est vide !';
+    const cartItemsContainer = document.getElementById("cartAndFormContainer");
+    cartItemsContainer.innerHTML = '<h1> Votre panier est vide ! </h1>';
+
 }
 
 // calcul du nombre d'articles total et du prix total
@@ -100,7 +105,7 @@ function calculateTotalPrice(items) {
     }, 0);
 }
 // fonction qui alerte sur la quantité si elle ne respecte pas minimum 1 et maximum 100
-function alertQuantity() {
+function alertQuantity(items) {
     let alertItemQuantity = document.querySelectorAll(".itemQuantity");
     for (let i = 0; i < alertItemQuantity.length; i++) {
         alertItemQuantity[i].addEventListener("change", function (event) {
@@ -132,10 +137,11 @@ function updateTotals(input, cartItems) {
             let index = itemsLocalStorage.findIndex(element => element.id == dataId && element.color == dataColor);
             itemsLocalStorage[index].quantity = Number(event.target.value);
 
-            let newLocalStorage = JSON.stringify(itemsLocalStorage); // remplace le localstorage initial
+            let newLocalStorage = JSON.stringify(itemsLocalStorage); // remplace le localstorage initial 
             localStorage.setItem('basket', newLocalStorage);
 
             calculateTotals(cartItems);
+
         })
     }
 }
@@ -150,10 +156,8 @@ function deleteProductFromTheCart(deleteBtn, cartItems, section, article) {
             let itemsLocalStorage = getBasketLocalStorage();
 
             let indexLs = itemsLocalStorage.findIndex(element => element.id == dataId && element.color == dataColor);
-
-            console.log("indexLs:", indexLs);
             let indexCartItems = cartItems.findIndex(element => element.id == dataId && element.color == dataColor);
-            console.log("indexCartItems:", indexCartItems);
+
             section.removeChild(article[i]);
 
             itemsLocalStorage.splice(indexLs, 1); // supprime l'élement de cette position
@@ -163,8 +167,11 @@ function deleteProductFromTheCart(deleteBtn, cartItems, section, article) {
             cartItems.splice(indexCartItems, 1);
 
             calculateTotals(cartItems);
+
+
         })
     }
+
 };
 
 // on ajoute les produits du localstorage à la page cart //
@@ -372,7 +379,7 @@ formContact.addEventListener("submit", (event) => {
         });
 
         // Données attendues par le controller
-        const data = {
+        const sendData = {
             contact: {
                 firstName: valueFirstName,
                 lastName: valueLastName,
@@ -388,16 +395,13 @@ formContact.addEventListener("submit", (event) => {
         fetch("http://localhost:3000/api/products/order", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            body: JSON.stringify(sendData),
         })
             .then((res) => res.json())
             .then(data => {
                 document.location.href = `confirmation.html?id=` + data.orderId;
                 localStorage.removeItem("product");
             });
-
-        //Vide les informations du formulaire pour éviter les erreurs
-        localStorage.clear();
 
     } else {
         alert("Veuillez vérifier le formulaire.")

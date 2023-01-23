@@ -1,4 +1,4 @@
-// récupératio nde la chaine de requete dans l'url //
+// récupération de la chaine de requete dans l'url //
 const url = window.location.search;
 
 //extraction  id de l'url //
@@ -6,9 +6,5 @@ const urlId = new URLSearchParams(url);
 const orderId = urlId.get("id");
 
 // affichage de l'ID //
-function orderDisplay() {
-    const order = document.getElementById("orderId");
-    order.innerText = orderId;
-};
-
-orderDisplay();
+const order = document.getElementById("orderId");
+order.innerText = orderId;

@@ -1,10 +1,8 @@
 // récupération de la chaine de requete dans l'url//
 const queryStringUrl = window.location.search;
-//console.log(queryStringUrl);//
 
 //extraction id de l'url //
 const urlId = new URLSearchParams(queryStringUrl);
-//console.log(urlId);
 const productId = urlId.get("id");
 
 //récupération des données via la méthode fetch //
@@ -13,7 +11,6 @@ let oneProduct = [];
 fetch(`http://localhost:3000/api/products/${productId}`)
     .then(response => response.json())
     .then(oneProduct => {
-        // console.log(oneProduct);
 
         //creation de l'image et de l'alt //
         let imgElement = document.querySelector(".item__img");
@@ -36,10 +33,8 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         }
 
     })
-    .catch(function (error) {
+    .catch(error => alert("Impossible de charger la page !"));
 
-        console.log('Il y a eu un problème avec le chargement de la page ');
-    });
 //creation de l 'ajout au panier via le localstorage //
 function saveBasket(basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
@@ -54,6 +49,7 @@ function getBasket() {
         return JSON.parse(basket);
     }
 }
+
 // fonction pour ajouter un produit au panier //
 function addBasket(product) {
     let basket = getBasket();
@@ -70,12 +66,17 @@ function addBasket(product) {
 
         (foundProduct != undefined) {
         foundProduct.quantity = parseInt(foundProduct.quantity) + parseInt(product.quantity);
+        if (foundProduct.quantity > 100) {
+            alert(`Vous avez ajouté un total de ` + foundProduct.quantity + ` ` + 'canapés de couleur' + ` ` + product.color + ` à votre panier, vous pouvez en ajouter dans la limite de 100 produits de même couleur.`);
+            return (foundProduct.quantity += 1); // bloque le nombre de canapés si le montant cumulé dépasse l'alerte.
+        }
     } else {
-
         basket.push(product);
+        alert('Votre article a bien été ajouté au panier.');
     }
     saveBasket(basket);
 }
+
 // ajout de l'eventlistener sur le bouton ajouter au panier //
 
 const addToBasket = document.querySelector("#addToCart");
@@ -85,20 +86,16 @@ addToBasket.addEventListener("click", (event) => {
     // on récupère les options selectionnées par le visiteur 
     const color = document.querySelector("#colors").value;
     const quantity = document.querySelector("#quantity").value;
-
-
     const basket = getBasket();
-    //console.log(basket)
+
     const product = {
         id: productId,
         color: color,
         quantity: quantity,
     }
-
     addBasket(product);
-
 }
-)
+);
 
 
 

@@ -8,9 +8,8 @@ fetch(url)
   })
   .then(function (data) {
     let allProducts = data;
-    console.log(allProducts);
     for (i = 0; i < allProducts.length; i++) {
-      
+
       /*creation des produits sur la page */
       const newA = document.createElement("a");
       newA.setAttribute("href", `./product.html?id=${allProducts[i]._id}`);
@@ -23,7 +22,7 @@ fetch(url)
       productImage.src = (allProducts[i].imageUrl);
       article.appendChild(productImage);
       productImage.setAttribute("alt", allProducts[i].altTxt);
-      
+
 
       const productName = document.createElement("h3");
       productName.innerText = (allProducts[i].name);
@@ -31,13 +30,9 @@ fetch(url)
 
       const productDescription = document.createElement("p");
       productDescription.innerText = (allProducts[i].description);
-      article.appendChild(productDescription); 
+      article.appendChild(productDescription);
     }
   })
-  .catch(function (error) {
-    
-    console.log('Il y a eu un problème avec le chargement de la page ');
-  });
+  .catch(error => alert("Impossible de charger la page !"));
 
-  
-  
+
