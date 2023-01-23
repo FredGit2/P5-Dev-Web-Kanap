@@ -54,7 +54,6 @@ function getBasket() {
 function addBasket(product) {
     let basket = getBasket();
     let foundProduct = basket.find(p => p.id == product.id && p.color === product.color);
-    console.log(foundProduct);
 
     // message en cas d'anomalie 
     if (

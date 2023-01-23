@@ -1,3 +1,4 @@
+const positionEmptyCart = document.querySelector("#cartAndFormContainer");
 // On récupère le localStorage //
 function getBasketLocalStorage() {
     return JSON.parse(localStorage.getItem("basket"));
@@ -52,8 +53,8 @@ let itemsOfLocalStorage = getBasketLocalStorage();
 
 function findAndCompareItemsInApi(item, basketItems) {
     if (itemsOfLocalStorage === null || itemsOfLocalStorage == 0) {
-
-        emptyBasket();
+        const emptyCart = `<h1> Votre panier est vide ! </h1>`;
+        positionEmptyCart.innerHTML = emptyCart;
 
     } else {
 
@@ -69,17 +70,8 @@ function findAndCompareItemsInApi(item, basketItems) {
                 'quantity': itemsOfLocalStorage[i].quantity,
                 'altTxt': found.altTxt
             })
-
-
         }
     }
-}
-
-//message si panier vide //
-function emptyBasket() {
-    const cartItemsContainer = document.getElementById("cartAndFormContainer");
-    cartItemsContainer.innerHTML = '<h1> Votre panier est vide ! </h1>';
-
 }
 
 // calcul du nombre d'articles total et du prix total
@@ -167,7 +159,7 @@ function deleteProductFromTheCart(deleteBtn, cartItems, section, article) {
             cartItems.splice(indexCartItems, 1);
 
             calculateTotals(cartItems);
-
+            location.reload();
 
         })
     }
